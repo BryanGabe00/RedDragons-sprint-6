@@ -1,0 +1,19 @@
+button {
+	border: 1px solid black;
+	float: left;
+	height: 3vw;
+	width: 3vw;
+	margin-right: -1px;
+	margin-top: -1px;
+	padding: 0;
+	font-size: 16px;
+	font-weight: bold;
+	line-height: 3vw;
+	text-align: center;
+}
+
+.clearfix {
+	clear: both;
+	content: "";
+	display: table;
+}
