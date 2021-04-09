@@ -4,10 +4,8 @@ class MosaicBtn extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			text: "",
 			isClicked: false,
-		};
-		this.style = {
+			text: "",
 			textColor: "#000",
 			bgColor: "#fff",
 			radius: "0",
@@ -42,13 +40,24 @@ class MosaicBtn extends React.Component {
 		return borderRadius + "px";
 	}
 
-	componentDidMount() {
-		/*Updates this.style and this.state.text when component renders*/
+	updateState() {
+		/*Updates this.state when called*/
 		const letter = this.generateLetter();
-		this.style.textColor = this.generateColor();
-		this.style.bgColor = this.generateColor();
-		this.style.radius = this.generateRadius();
-		this.setState({text: letter});
+		const radius = this.generateRadius();
+		const textColor = this.generateColor();
+		const bgColor = this.generateColor();
+
+		this.setState({
+			text: letter,
+			radius: radius,
+			textColor: textColor,
+			bgColor: bgColor,
+		});
+	}
+
+	componentDidMount() {
+		/*Updates this.state when component renders*/
+		this.updateState();
 	}
 
 	render() {
@@ -57,6 +66,7 @@ class MosaicBtn extends React.Component {
 		if (this.state.isClicked) {
 			element = (
 				<button
+					className = "box"
 					style = {{
 						color: "black",
 						backgroundColor: "yellow",
@@ -64,16 +74,17 @@ class MosaicBtn extends React.Component {
 					}}
 					onClick = {() => this.setState({isClicked: false})}
 				>
-					{":)"}
+					:)
 				</button>
 			);
 		} else {
 			element = (
 				<button
+					className = "box"
 					style = {{
 						color: this.state.textColor,
-						backgroundColor: this.style.bgColor,
-						borderRadius: this.style.radius,
+						backgroundColor: this.state.bgColor,
+						borderRadius: this.state.radius,
 					}}
 					onClick = {() => this.setState({isClicked: true})}
 				>
@@ -109,23 +120,53 @@ class MosaicRow extends React.Component {
 }
 
 class Mosaic extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {rowIDs: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]};
+		this.currentRow = 0
+	}
+
+	renderRow() {
+		/*Returns a single pre-configured <MosaicRow /> component*/
+		let index = this.currentRow
+		this.currentRow = (this.currentRow + 1) % 12;
+		return (
+			<MosaicRow 
+				className = "row"
+				key = {this.state.rowIDs[index]}
+			/>
+		);
+	}
+
+	randomize() {
+		/*Updates the rowIDs Array when called*/
+		let newArray = this.state.rowIDs.map(x => x + 12)
+		this.setState({rowIDs: newArray});
+	}
+
 	render() {
 		/*Renders twelve rows of MosaicRow components*/
 		return (
-			<div>
-				<MosaicRow className="row" />
-				<MosaicRow className="row" />
-				<MosaicRow className="row" />
-				<MosaicRow className="row" />
-				<MosaicRow className="row" />
-				<MosaicRow className="row" />
-				<MosaicRow className="row" />
-				<MosaicRow className="row" />
-				<MosaicRow className="row" />
-				<MosaicRow className="row" />
-				<MosaicRow className="row" />
-				<MosaicRow className="row" />
-			</div>
+			<>
+				{this.renderRow()}
+				{this.renderRow()}
+				{this.renderRow()}
+				{this.renderRow()}
+				{this.renderRow()}
+				{this.renderRow()}
+				{this.renderRow()}
+				{this.renderRow()}
+				{this.renderRow()}
+				{this.renderRow()}
+				{this.renderRow()}
+				{this.renderRow()}
+				<button 
+					className = "uiButton"
+					onClick = {() => this.randomize()}
+				>
+					Randomize!
+				</button>
+			</>
 		);
 	}
 }
