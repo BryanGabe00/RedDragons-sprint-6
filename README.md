@@ -1,3 +1,42 @@
+Informational
+=============
+Authors: Rich Goluszka, Bryan Gabe, Juan Moncada  
+Last Updated: 4/9/2021  
+Project: Mosaic with React  
+Course: Applied Programming Languages (CPSC360-1) with Prof. Eric Pogue
+
+Originality
+===========
+Nearly all of the code in this project is our own, but there are two pieces that were written 
+by others:
+* The index.css button.box and .clearfix CSS code for styling buttons and arranging them into a 
+grid came from the reactjs tutorial starter code (https://reactjs.org/tutorial/tutorial.html)
+* The logic of the App.js MosaicBtn.compareColors() function came from Stacie Arellano 
+(https://css-tricks.com/understanding-web-accessibility-color-contrast-guidelines-and-ratios/)  
+
+Sources
+=======
+This web-app is currently hosted on Azure at https://nice-forest-0da45c110.azurestaticapps.net  
+The source code is available at https://github.com/BryanGabe00/RedDragons-sprint-6
+
+Build / Execute / Dependency
+============================
+Required files
+--------------
+Everything in the GitHub repository
+
+Build Instructions
+------------------
+To prepare to run the react-app locally:
+1. Delete the `package-lock.json` and `yarn.lock` files
+2. Open a terminal, navigate to the directory containing `package.json`, and run `yarn`
+
+Execution Instructions
+----------------------
+1. Open a terminal, navigate to the directory containing `package.json`, and run `yarn start`
+
+REACT INFORMATION
+=================
 # ReactBasic
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
