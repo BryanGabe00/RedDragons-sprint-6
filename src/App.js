@@ -22,7 +22,7 @@ class MosaicBtn extends React.Component {
 	}
 
 	generateColor() {
-		/*Builds and returns a JS color rgb value randomly using JS Math library*/
+		/*Builds and returns a random color value as a "r,g,b" string*/
 		let colorArray = Array(3).fill(0).map(
 			x => x = Math.round(Math.random()*255)
 		);
@@ -33,12 +33,12 @@ class MosaicBtn extends React.Component {
 		/*Checks whether text and bg colors contrast well
 		*this algorithm comes from css-tricks.com (see full link in README.md)*/
 		
-		/*convert rgb values to linear values between 0 and 1*/
+		/*convert rgb strings to arrays, convert [0-255] rgb values to [0-1] linear values*/
 		let getColor = x => x / 255;
 		let textColor = text.split(',').map(getColor);
 		let bgColor = bg.split(',').map(getColor);
 
-		/*apply gamma correction to values*/
+		/*apply gamma correction to each color*/
 		let gammaCorrect = x => {
 			if (x < 0.03928) {
 				return x / 12.92;
@@ -50,26 +50,28 @@ class MosaicBtn extends React.Component {
 		textColor = textColor.map(gammaCorrect);
 		bgColor = bgColor.map(gammaCorrect);
 
-		/*calculate luminance*/
+		/*calculate luminance of each color*/
 		let calcLum = color => {
 			return (color[0]*0.2126) + (color[1]*0.7152) + (color[2]*0.0722);
 		}
 		let textLum = calcLum(textColor);
 		let bgLum = calcLum(bgColor);
 
-		/*calculate contrast*/
+		/*calculate contrast of colors*/
 		let score = 0;
 		if (textLum > bgLum) {
 			score = (textLum + 0.05) / (bgLum + 0.05);
 		} else {
 			score = (bgLum + 0.05) / (textLum + 0.05);
 		}
-		/*indicate whether contrast is sufficient*/
+
+		/*return true/false based on calculated contrast score*/
 		return (score > 3 ? true : false);
 	}
 
 	generateRadius() {
-		/*Returns a borderRadius value of 0 or 50px randomly*/
+		/*returns a value of either 0 or 50px randomly
+		* to determine whether shape is a circle or square*/
 		const borderRadius = Math.round(Math.random())*50;
 		return borderRadius + "px";
 	}
@@ -91,7 +93,7 @@ class MosaicBtn extends React.Component {
 	}
 
 	renderState() {
-		/*Returns a button formatted according to the MosaicBtn state*/
+		/*Returns a button formatted according to the component state*/
 		return (
 			<button	className = "box"
 				style = {{
@@ -121,6 +123,7 @@ class MosaicBtn extends React.Component {
 			bgColor = this.generateColor();
 		}
 
+		/*updates component state*/
 		this.setState({
 			text: letter,
 			radius: radius,
@@ -143,7 +146,7 @@ class MosaicBtn extends React.Component {
 
 class MosaicRow extends React.Component {
 	render() {
-		/*Renders a row of twelve MosaicBtn components*/
+		/*Renders twelve MosaicBtn components as 1 row*/
 		return (
 			<div>
 				<MosaicBtn />
@@ -160,7 +163,7 @@ class MosaicRow extends React.Component {
 				<MosaicBtn />
 				<div className="clearfix" />
 			</div>
-		)
+		);
 	}
 }
 
@@ -171,8 +174,14 @@ class Mosaic extends React.Component {
 		this.currentRow = 0;
 	}
 
+	randomize() {
+		/*Updates this.state.rowIDs Array when called*/
+		let newArray = this.state.rowIDs.map(x => x + 12)
+		this.setState({rowIDs: newArray});
+	}
+
 	renderRow() {
-		/*Returns a single pre-configured <MosaicRow /> component*/
+		/*Configures and returns a single <MosaicRow /> component*/
 		let index = this.currentRow;
 		this.currentRow = (this.currentRow + 1) % 12;
 		return (
@@ -182,14 +191,8 @@ class Mosaic extends React.Component {
 		);
 	}
 
-	randomize() {
-		/*Updates the rowIDs Array when called*/
-		let newArray = this.state.rowIDs.map(x => x + 12)
-		this.setState({rowIDs: newArray});
-	}
-
 	render() {
-		/*Renders twelve rows of MosaicRow components*/
+		/*Renders twelve MosaicRow components as 1 mosaic*/
 		return (
 			<>
 				{this.renderRow()}
