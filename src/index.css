@@ -10,6 +10,7 @@ button.box {
 	font-weight: bold;
 	line-height: 3vw;
 	text-align: center;
+	box-sizing: border-box
 }
 
 .clearfix {
