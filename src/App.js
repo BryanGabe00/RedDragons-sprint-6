@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 
 const createArray = length => [...Array(length)];
 
@@ -107,26 +107,63 @@ function MosaicRow() {
 	);
 }
 
-function Clock() {
-	const [date] = useState(new Date());
-	/* RETURN ELEMENT */
-}
-
 function Mosaic() {
-	const [updates, setUpdates] = useState(0);
 	/* RETURN ELEMENT */
 	return (
 		<>
 			{createArray(12).map( (r, i) => (
-				<MosaicRow key={i + updates} />
+				<MosaicRow key={i} />
 			))}
-			<button onClick={() => setUpdates(updates + 12)}>
-				Randomize!
-			</button>
 		</>
 	);
 }
 
+function Clock({ onRefresh, secondCount }) {
+	/* SETUP STATEFULNESS */
+	const [time, setTime] = useState(secondCount);
+	const [trigger, setTrigger] = useState(false);
+
+	useEffect(() => {
+		let timerID = setInterval(() => tick(), 1000);
+		return () => clearInterval(timerID);
+	});
+
+	const tick = () => {
+		if (time - 1 >= 0) {
+			setTime(time - 1);
+		} else if (!trigger) {
+			setTime(secondCount);
+			setTrigger(true);
+		}
+	}
+
+	const refresh = () => {
+		setTrigger(false)
+		onRefresh();
+	}
+
+	/* RETURN ELEMENT */
+	return (
+		<h1>
+			{(!trigger) ? `${time} seconds left` : refresh()}
+		</h1>
+	);
+}
+
 export default function App() {
-	return <Mosaic />;
+	/* SETUP STATEFULNESS */
+	const [updates, setUpdates] = useState(0);
+
+	const refresh = () => setUpdates(updates + 1);
+	
+	/* RETURN ELEMENT */
+	return (
+		<>
+			<Mosaic key={updates} />
+			<Clock key={updates+1} onRefresh={refresh} secondCount={60}/>
+			<button onClick={() => refresh()} >
+				Randomize!
+			</button>
+		</>
+	);
 }
