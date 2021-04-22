@@ -1,3 +1,16 @@
+#root {
+	font-size: 1.5vw;
+	text-align: center;
+}
+
+div div::after {
+	display: block;
+	clear: both;
+	content: "";
+}
+
+div h1 {margin: 0;}
+
 button.box {
 	border: 1px solid black;
 	float: left;
@@ -10,11 +23,4 @@ button.box {
 	font-weight: bold;
 	line-height: 3vw;
 	text-align: center;
-	box-sizing: border-box
-}
-
-.clearfix {
-	clear: both;
-	content: "";
-	display: table;
 }

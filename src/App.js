@@ -2,15 +2,18 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 
 const createArray = length => [...Array(length)];
 
+/***********************************
+ * RENDERS THE MosaicBtn COMPONENT *
+ ***********************************/
 function MosaicBtn() {
-	/* SETUP STATEFULNESS */
+	//setup statefulness for interaction, shape, text, and colors
 	const [clicked, setClicked] = useState(false);
 	const [radius, setRadius] = useState('0px');
 	const [text, setText] = useState('#');
 	const [color, setColor] = useState('0,0,0');
 	const [bgColor, setBGColor] = useState('255,255,255');
 
-	/* RANDOMIZE ON FIRST RENDER */
+	//randomize from default values on first render
 	useLayoutEffect(() => {
 		setRadius(genRadius());
 		setText(genLetter());
@@ -25,7 +28,7 @@ function MosaicBtn() {
 		setBGColor(bgColor);
 	}, []);
 
-	/* GENERATE A RANDOM UPPERCASE LETTER */
+	//generate a random uppercase letter for text state
 	const genLetter = () => {
 		let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 
 		'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
@@ -34,13 +37,13 @@ function MosaicBtn() {
 		return letters[letterIndex];
 	}
 
-	/* GENERATE A RADIUS VALUE OF 0px OR 50px */
+	//generate a css border-radius value of 0px or 50px for shape state
 	const genRadius = () => {
 		let radius = Math.round(Math.random())*50;
 		return `${radius}px`;
 	}
 
-	/* GENERATE A RANDOM RGB COLOR VALUE */
+	//generate a random rgb(---) color for color and bgColor state
 	const genColor = () => {
 		let colorArray = Array(3).fill(0).map(
 			x => x = Math.round(Math.random()*255)
@@ -48,12 +51,12 @@ function MosaicBtn() {
 		return colorArray.toString();
 	}
 
-	/* INDICATE WHETHER TEXT AND BACKGROUND COLORS CONTRAST WELL*/
+	//determine whether text and bg colors contrast well before setting state
 	const validateColors = (text, bg) => {
-		/* CONVERT RGB STRINGS TO ARRAYS, CONVERT RGB VALUES TO LINEAR VALUES */
+		//converts RGB values to linear values in range [0, 1]
 		let getColor = x => x / 255;
 
-		/* APPLY GAMMA CORRECTION TO EACH COLOR */
+		//applies gamma correction to each color value
 		let gammaCorrect = x => {
 			if (x < 0.03928) {
 				return x / 12.92;
@@ -62,24 +65,26 @@ function MosaicBtn() {
 				return (mod**2.4);
 			}
 		}
+		//convert RGB strings to arrays, call getColor() and gammaCorrect() on each
 		let textColor = text.split(',').map(getColor).map(gammaCorrect);
 		let bgColor = bg.split(',').map(getColor).map(gammaCorrect);
 		
-		/* CALCULATE LUMINANCE OF EACH COLOR */
+		//calculates the luminance of each color
 		let calcLum = color => {
 			return (color[0]*0.2126) + (color[1]*0.7152) + (color[2]*0.0722);
 		}
+		//transform gamma-corrected colors to luminance values
 		let textLum = calcLum(textColor);
 		let bgLum = calcLum(bgColor);
 
-		/* CALCULATE COLOR CONTRAST */
+		//calculate contrast between the luminance values
 		let score = (textLum > bgLum) ? (textLum + 0.05) / (bgLum + 0.05) : (bgLum + 0.05) / (textLum + 0.05);
 
-		/* RETURN TRUE/FALSE BASED ON CONTRAST */
+		//compare contrast score against passing value, return result
 		return (score > 3 ? true : false);
 	}
 
-	/* RETURN ELEMENT */
+	//renders a button element styled according to the component state
 	return (
 		<button 
 			className='box'
@@ -95,20 +100,25 @@ function MosaicBtn() {
 	);
 }
 
-function MosaicRow() {
-	/* RETURN ELEMENT */
+/***********************************
+ * RENDERS THE MosaicRow COMPONENT *
+ ***********************************/
+ function MosaicRow() {
+	//render 12 MosaicBtn Components within a <div>
 	return (
 		<div>
 			{createArray(12).map( (b, i) => (
 				<MosaicBtn key={i} />
 			))}
-			<div className='clearfix' />
 		</div>
 	);
 }
 
-function Mosaic() {
-	/* RETURN ELEMENT */
+/******************************** 
+ * RENDERS THE Mosaic COMPONENT *
+ ********************************/
+ function Mosaic() {
+	//render 12 MosaicRow Components
 	return (
 		<>
 			{createArray(12).map( (r, i) => (
@@ -118,16 +128,21 @@ function Mosaic() {
 	);
 }
 
-function Clock({ onRefresh, secondCount }) {
-	/* SETUP STATEFULNESS */
+/*******************************
+ * RENDERS THE COUNTDOWN TIMER *
+ *******************************/
+ function Clock({ onRefresh, secondCount }) {
+	//setup statefulness for timer countdown
 	const [time, setTime] = useState(secondCount);
 	const [trigger, setTrigger] = useState(false);
 
+	//make timer tick once every second
 	useEffect(() => {
 		let timerID = setInterval(() => tick(), 1000);
 		return () => clearInterval(timerID);
 	});
 
+	//timer behavior for finishing countdown
 	const tick = () => {
 		if (time - 1 >= 0) {
 			setTime(time - 1);
@@ -137,33 +152,43 @@ function Clock({ onRefresh, secondCount }) {
 		}
 	}
 
+	//randomize page on finishing countdown
 	const refresh = () => {
-		setTrigger(false)
+		setTrigger(false);
 		onRefresh();
 	}
 
-	/* RETURN ELEMENT */
+	//render the timer countdown
 	return (
-		<h1>
-			{(!trigger) ? `${time} seconds left` : refresh()}
+		<h1
+			style={{
+				color: (time <= 10) ? 'red' : 'black'
+			}}
+		>
+			{(trigger) ? refresh() : `${time} seconds left`}
 		</h1>
 	);
 }
 
-export default function App() {
-	/* SETUP STATEFULNESS */
+/*********************************
+ * RENDERS THE WHOLE APPLICATION *
+ *********************************/
+ export default function App() {
+	//setup statefulness for updating the page
 	const [updates, setUpdates] = useState(0);
 
 	const refresh = () => setUpdates(updates + 1);
 	
-	/* RETURN ELEMENT */
+	//render the timer, mosaic, and randomize button
 	return (
 		<>
+			<div>
+				<button onClick={() => refresh()} >
+					Randomize!
+				</button>
+				<Clock key={updates+1} onRefresh={refresh} secondCount={60}/>
+			</div>
 			<Mosaic key={updates} />
-			<Clock key={updates+1} onRefresh={refresh} secondCount={60}/>
-			<button onClick={() => refresh()} >
-				Randomize!
-			</button>
 		</>
 	);
 }
